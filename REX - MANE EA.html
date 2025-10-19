@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Forex Trading Bot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-image: url('https://copilot.microsoft.com/th/id/BCO.f62dd885-896a-4df1-85f8-3947dd61a36e.png');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: rgba(0, 0, 0, 0.75);
+      padding: 30px;
+      border-radius: 10px;
+    }
+    button, select, input {
+      margin: 10px;
+      padding: 10px;
+      width: 90%;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      background-color: #00aaff;
+      color: white;
+      cursor: pointer;
+    }
+    .section {
+      margin-top: 20px;
+    }
+    #status {
+      font-weight: bold;
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    .indicator {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      margin-left: 10px;
+    }
+    .connected {
+      background-color: #00ff00;
+    }
+    .disconnected {
+      background-color: #ff0000;
+    }
+    @media screen and (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+      button, select, input {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Forex Trading Bot</h1>
+    <button onclick="startBot()">START BOT</button>
+    <button onclick="exitBot()">EXIT BOT</button>
+    <button onclick="showSettings()">CURRENCY PAIR SETTINGS</button>
+
+    <div id="settings" style="display:none;" class="section">
+      <h2>Trade Settings</h2>
+
+      <label>MetaTrader Platform:</label><br/>
+      <input type="radio" name="platform" value="MT4" checked> MetaTrader 4
+      <input type="radio" name="platform" value="MT5"> MetaTrader 5<br/>
+
+      <input type="text" id="metaId" placeholder="MetaTrader ID" /><br/>
+      <input type="password" id="metaPass" placeholder="Password" /><br/>
+      <input type="text" id="broker" placeholder="Broker Name or API" /><br/>
+      <select id="accountType">
+        <option value="">Select Account Type</option>
+        <option value="Standard">Standard</option>
+        <option value="ECN">ECN</option>
+        <option value="Demo">Demo</option>
+      </select><br/>
+
+      <select id="currencyPair">
+        <option value="EURUSD">EUR/USD</option>
+        <option value="GBPUSD">GBP/USD</option>
+        <option value="USDJPY">USD/JPY</option>
+        <option value="AUDUSD">AUD/USD</option>
+        <option value="BTCUSD">BTC/USD</option>
+      </select><br/>
+
+      <input type="number" id="lotSize" placeholder="Lot Size (e.g. 0.01)" /><br/>
+
+      <button onclick="connectBroker()">CONNECT TO BROKER</button>
+      <button onclick="executeTrade()">OPEN TRADE</button>
+      <button onclick="closeTrade()">CLOSE TRADE</button>
+    </div>
+
+    <div id="status">
+      Status: <span id="connectionStatus">Not Connected</span>
+      <span id="statusLight" class="indicator disconnected"></span>
+    </div>
+  </div>
+
+  <script>
+    function startBot() {
+      const metaId = document.getElementById("metaId").value;
+      const metaPass = document.getElementById("metaPass").value;
+
+      if (!metaId || !metaPass) {
+        document.getElementById("status").innerHTML = 
+          "⚠️ Please enter your MetaTrader ID and password before starting the bot.";
+        return;
+      }
+
+      document.getElementById("status").innerHTML = 
+        "✅ Bot started. Opening trades...";
+    }
+
+    function exitBot() {
+      document.getElementById("connectionStatus").innerText = "Not Connected";
+      document.getElementById("statusLight").className = "indicator disconnected";
+      document.getElementById("status").innerHTML = "Bot exited.";
+    }
+
+    function showSettings() {
+      document.getElementById("settings").style.display = "block";
+    }
+
+    function connectBroker() {
+      const platform = document.querySelector('input[name="platform"]:checked').value;
+      const metaId = document.getElementById("metaId").value;
+      const metaPass = document.getElementById("metaPass").value;
+      const broker = document.getElementById("broker").value;
+      const accountType = document.getElementById("accountType").value;
+
+      if (!metaId || !metaPass || !broker || !accountType) {
+        alert("Please fill in all broker connection details.");
+        return;
+      }
+
+      document.getElementById("connectionStatus").innerText = "Connected";
+      document.getElementById("statusLight").className = "indicator connected";
+      document.getElementById("status").innerHTML = 
+        `✅ Connected to ${broker} via ${platform} (${accountType})`;
+    }
+
+    function executeTrade() {
+      const pair = document.getElementById("currencyPair").value;
+      const lot = document.getElementById("lotSize").value;
+
+      if (!pair || !lot) {
+        alert("Please select currency pair and lot size.");
+        return;
+      }
+
+      document.getElementById("status").innerHTML = 
+        `✅ Trade opened: ${pair} @ ${lot} lots`;
+    }
+
+    function closeTrade() {
+      document.getElementById("status").innerHTML = 
+        "✅ Trade closed.";
+    }
+  </script>
+</body>
+</html>
